@@ -1,0 +1,320 @@
+body {
+  background: #f8f8f8;
+  color: #333;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.section-title {
+  width: 80%;
+  margin: 20px auto 10px;
+  border-bottom: 2px solid #aaa;
+}
+.section-title h1 {
+  font-weight: 500;
+  font-size: 18px;
+  color: #333;
+}
+
+/* --- 授業詳細ブロック --- */
+.class-section {
+  width: 80%;
+  display: flex;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* --- テーブル --- */
+table {
+  width: 80%;
+  /* margin: 0 auto; */
+  border-collapse: collapse;
+  background: #fdfdfd;
+  font-size: 13px;
+}
+
+th, td {
+  
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  width: 17%;
+  background: #999;
+  color: white;
+  font-weight: 500;
+}
+
+tr:hover {
+  background: #f2f7ff;
+}
+
+/* --- 評価フォーム --- */
+.add-info {
+  width: 20%;
+  margin: 10px;
+  font-size: 12px;
+}
+.add-info .title {
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.add-info form {
+  text-align: left;
+  border-top: 1px dashed #bbb;
+  padding-top: 5px;
+}
+
+.add-info .form-group {
+  margin: 5px 0;
+}
+
+.add-info select {
+  width: 100%;
+  height: 24px;
+  font-size: 12px;
+}
+
+.add-info button {
+  display: block;
+  margin-top: 15px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.add-info button:hover {
+  background: #00508a;
+}
+
+.add-info p{
+  font-size: 13px;
+  padding:  12px 0;
+
+
+}
+.add-info p span{
+  color:#007acc;
+  border-bottom: 1px solid #007acc;
+}
+
+
+
+
+/* --- 掲示板 --- */
+.board {
+  width: 80%;
+  margin: 20px auto;
+  padding: 10px 12px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background: #fdfdfd;
+}
+.board-note {
+  color: #b33a3a;      /* 少し落ち着いた赤 */
+  font-size: 12px;
+  font-style: italic;   /* 注意っぽく斜体 */
+  margin-top: 4px;
+}
+
+
+
+.tabs {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.tab-button {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+  margin-right: 4px;
+  font-size: 12px;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-button.active {
+  background: #007acc;
+  color: white;
+}
+
+.post {
+  border-top: 1px dashed #bbb;
+  padding: 5px 0;
+  display: flex;
+}
+.post-message {
+  max-width: 85%;
+  font-size: 13px;
+  /* 追加部分 */
+  word-break: break-word;    /* 長い単語も途中で折り返す */
+  white-space: pre-wrap;     /* 改行・スペースを維持して折り返す */
+}
+
+.post-date {
+  /* width: 20%; */
+  font-size: 11px;
+  color: #666;
+  margin-left: 6px;
+}
+
+.post-form {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+.post-form textarea {
+  width: 45%;
+  height: 80px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  resize: none;
+}
+
+.post-form button {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.post-form button:hover {
+  background: #00508a;
+}
+
+/* --- 戻るリンク --- */
+.back-link {
+  display: block;
+  width: fit-content;
+  margin: 20px auto;
+  padding: 6px 14px;
+  text-decoration: none;
+  background: #007acc;
+  color: white;
+  border-radius: 4px;
+  font-size: 13px;
+  transition: background 0.3s;
+}
+
+.back-link:hover {
+  background: #00508a;
+}
+
+
+/*ーーーーーーーーーレスポンシブデザインーーーーーーーー*/
+@media (max-width: 431px) {
+
+  main{
+    margin-top: 60px;
+  }
+  .wrapper{
+    width: 92%;
+  }
+  .section-title {
+    width: 100%;
+  }
+  .class-section{
+    width: 100%;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+  table {
+  width: 100%;
+  font-size: 11px;
+  }
+  table th{
+    width: 24%;
+  }
+
+  /* --- 評価フォーム --- */
+  .add-info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* gap: 10px; */
+    margin: 10px;
+    font-size: 11px;
+  }
+
+  .add-info form select{
+    width: 80%;
+  }
+
+  .add-info button {
+    display: block;
+    margin-top: 15px;
+    padding: 4px 8px;
+    font-size: 11px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .add-info button:hover {
+    background: #00508a;
+  }
+
+  .add-info p{
+    font-size: 12px;
+    padding: 0 12px;
+  }
+  .add-info p span{
+    color:#007acc;
+    border-bottom: 1px solid #007acc;
+  }
+ 
+
+  .board{
+    width: 100%;
+  }
+
+  .board-note{
+    font-size: 10px;
+  }
+
+  .board button {
+    font-size: 11px;
+    width: 23%;
+    padding: 3px 7px;
+  }
+  
+  .post-message{
+    font-size: 11px;
+    max-width: 65%;
+    
+  }
+  .post-date{
+    font-size: 10px;
+  }
+ 
+
+  .post-form {
+    display: flex;
+    flex-direction: column; /* 縦並び */
+    align-items: flex-start; /* 左寄せ */
+    gap: 8px;               /* 要素間の隙間 */
+
+  }
+  .post-form textarea{
+    width: 100%;
+  }
+
+}

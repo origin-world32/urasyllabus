@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title><%= classInfo.title %> | 授業情報</title>
+  <link rel="stylesheet" href="/stylesheets/reset.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/classdetail.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+
+</head>
+<body>
+  <header id = "header">
+    <div class="wrapper">
+      <a href="/"><h2>うらシラバス</h2></a>
+
+    </div>
+        
+
+  </header>
+
+  <main>
+    <div class="wrapper">
+
+      <% if (page !== 'index') { %>
+      <nav class="breadcrumb">
+        <a href="/">TOP</a>
+        <% if (page === 'classdetail') { %>
+          &gt; <a href="/class?faculty=<%= classInfo.faculty %>&department=<%= classInfo.department %>">授業一覧</a>
+          &gt; <span><%= classInfo.title %></span>
+        <% } %>
+      </nav>
+      <% } %>
+
+
+
+      <!-- 単位の取りやすさ、満足度の数値を★化 -->
+      <% function stars(num) { 
+        return '★★★★★☆☆☆☆☆'.slice(5 - num, 10 - num); 
+      } %>
+      
+      <div class="section-title">
+        <h1><%= classInfo.title %></h1>
+      </div>
+      <div class="class-section">
+        
+        <table>
+          <tr>
+            <th>学部</th>
+            <td><%= classInfo.faculty %></td>
+          </tr>
+          <tr>
+            <th>学科</th>
+            <td><%= classInfo.department %></td>
+          </tr>
+          <tr>
+            <th>担当教員</th>
+            <td><%= classInfo.teacher %></td>
+          </tr>
+          <tr>
+            <th>出席の有無</th>
+            <td><%= classInfo.attendance %></td>
+          </tr>
+          <tr>
+            <th>単位の取りやすさ</th>
+            <td><%= stars(Math.round(classInfo.avgDifficulty)) %> : <%= classInfo.avgDifficulty.toFixed(1) %> / 5</td>
+          </tr>
+          <tr>
+            <th>満足度</th>
+            <td><%= stars(Math.round(classInfo.avgSatisfaction)) %> : <%= classInfo.avgSatisfaction.toFixed(1) %> / 5</td>
+          </tr>
+          <tr>
+            <th>授業概要・情報</th>
+            <td><%= classInfo.description %></td>
+          </tr>
+        </table>
+        <div class="add-info">
+          <div>
+            <div class="title">授業を評価</div>
+            <form action="/classdetail/<%= classInfo.id %>/review" method="POST" data-class-id="<%= classInfo.id %>">
+              <div class="form-group">
+                <label>単位の取りやすさ:</label>
+                <select name="difficulty" required>
+                  <option value="1">★☆☆☆☆</option>
+                  <option value="2">★★☆☆☆</option>
+                  <option value="3">★★★☆☆</option>
+                  <option value="4">★★★★☆</option>
+                  <option value="5">★★★★★</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>満足度:</label>
+                <select name="satisfaction" required>
+                  <option value="1">★☆☆☆☆</option>
+                  <option value="2">★★☆☆☆</option>
+                  <option value="3">★★★☆☆</option>
+                  <option value="4">★★★★☆</option>
+                  <option value="5">★★★★★</option>
+                </select>
+              </div>
+
+              <button type="submit">評価を送信</button>
+            </form>
+          </div>
+          
+
+          <p><span><%= classInfo.reviewCount %>件</span>の評価が集まっています.</p>
+
+        </div>
+        
+      </div>
+      
+      <!-- 掲示板 -->
+      <div class="board">
+        <h2 >掲示板</h2>
+        <p class="board-note">※個人情報や誹謗中傷は禁止です. 削除させていただく場合がございます.</p>
+        <!-- タブ切り替え -->
+        <div class="tabs">
+          <button class="tab-button active" data-tab="class">授業情報</button>
+          <button class="tab-button" data-tab="exam">過去問情報</button>
+        </div>
+
+        <!-- 授業情報掲示板 -->
+        <div class="tab-content" id="class">
+          <div class="posts">
+            <% if(posts.classPosts && posts.classPosts.length > 0) { %>
+              <% posts.classPosts.forEach(post => { %>
+                <div class="post">
+                  <div class="post-message"><%= post.message %></div>
+                  <div class="post-date">：<%= post.created_at ? new Date(post.created_at + 'Z').toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).toLocaleString() : '' %></div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p class="contents-none">まだ授業情報の投稿はありません。</p>
+            <% } %>
+          </div>
+
+          <form class="post-form" action="/classdetail/<%= classInfo.id %>/post" method="POST">
+            <button type="submit">書き込む</button>
+            <textarea name="message" placeholder="授業に関する情報を入力"></textarea>
+            <input type="hidden" name="type" value="class">
+            
+          </form>
+
+        </div>
+
+        <!-- 過去問情報掲示板 -->
+        <div class="tab-content" id="exam" style="display:none;">
+          
+          <div class="posts">
+            <% if(posts.examPosts && posts.examPosts.length > 0) { %>
+              <% posts.examPosts.forEach(post => { %>
+                <div class="post">
+                  <div class="post-message"><%= post.message %></div>
+                  <div class="post-date">：<%= post.created_at ? new Date(post.created_at + 'Z').toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).toLocaleString() : '' %></div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p class="contents-none">まだ過去問情報の投稿はありません。</p>
+            <% } %>
+            
+          </div>
+
+          <form class="post-form" action="/classdetail/<%= classInfo.id %>/post" method="POST">
+            <button type="submit">書き込む</button>
+            <textarea name="message" placeholder="過去問に関する情報を入力"></textarea>
+            <input type="hidden" name="type" value="exam">
+            
+          </form>
+
+
+
+        </div>
+      </div>
+
+      <br>
+      <a class="back-link" href="/class">授業一覧に戻る</a>
+
+    </div>
+  </main>
+  <footer>
+    <div class="wrapper">
+      <p>&copy; うらシラバス. All rights reserved</p>
+      <ul class="footer-links">
+        <li><a href="/terms">利用規約</a></li>
+        <li><a href="/privacy">プライバシーポリシー</a></li>
+        <li><a href="https://forms.gle/cudtixSY962CpuPj7">コンタクト</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function activateTab(tabName) {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.style.display = 'none');
+
+      const activeButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+      const activeContent = document.getElementById(tabName);
+
+      if(activeButton) activeButton.classList.add('active');
+      if(activeContent) activeContent.style.display = 'block';
+    }
+
+    // URLパラメータからタブ名を取得
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab') || 'class'; // デフォルトは授業情報
+    activateTab(tabParam);
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        activateTab(button.dataset.tab);
+      });
+    });
+  });
+ 
+  </script>
+
+  <!-- 二重評価をできないように -->
+  <script src="/javascripts/classdetail.js"></script> 
+</body>
+</html>

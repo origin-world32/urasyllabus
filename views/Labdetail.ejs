@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title><%= LabInfo.title %> | 授業情報</title>
+  <link rel="stylesheet" href="/stylesheets/reset.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/Labdetail.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <header id = "header">
+    <div class="wrapper">
+      <a href="/"><h2>うらシラバス</h2></a>
+    </div>
+        
+
+  </header>
+
+  <main>
+    <div class="wrapper">
+
+      <% if (page !== 'index') { %>
+      <nav class="breadcrumb">
+        <a href="/">TOP</a>
+        <% if (page === 'Labdetail') { %>
+          &gt; <a href="/Lab?faculty=<%= LabInfo.faculty %>&department=<%= LabInfo.department %>">研究室一覧</a>
+          &gt; <span><%= LabInfo.title %></span>
+        <% } %>
+      </nav>
+      <% } %>
+
+      <div class="section-title">
+        <h1><%= LabInfo.title %></h1>
+      </div>
+      <div class="Lab-section">
+        
+        <table>
+          <tr>
+            <th>学部</th>
+            <td><%= LabInfo.faculty %></td>
+          </tr>
+          <tr>
+            <th>学科</th>
+            <td><%= LabInfo.department %></td>
+          </tr>
+          <tr>
+            <th>教授</th>
+            <td><%= LabInfo.teacher %></td>
+          </tr>
+          <tr>
+            <th>コアタイム</th>
+            <td><%= LabInfo.coretime %></td>
+          </tr>
+          <tr>
+            <th>キーワード</th>
+            <td><%= LabInfo.keyword %></td>
+          </tr>
+          <tr>
+            <th>研究室情報</th>
+            <td><%= LabInfo.description %></td>
+          </tr>
+        </table>
+     
+      </div>
+      
+      <!-- 掲示板 -->
+      <div class="board">
+        <h2>掲示板</h2>
+        <p class="board-note">※個人情報や誹謗中傷は禁止です. 削除させていただく場合がございます. 
+        </p>
+
+        <!-- 研究室情報掲示板 -->
+        <div class="tab-content" id="Lab">
+          <div class="posts">
+            <% if(posts && posts.length > 0) { %>
+              <% posts.forEach(post => { %>
+                <div class="post">
+                  <div class="post-message"><%= post.message %></div>
+                  <div class="post-date">：<%= post.created_at ? new Date(post.created_at + 'Z').toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).toLocaleString() : '' %></div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p class="contents-none">まだ研究室に関する情報の投稿はありません。</p>
+            <% } %>
+          </div>
+
+          <form class="post-form" action="/Labdetail/<%= LabInfo.id %>/post" method="POST">
+            <button type="submit">書き込む</button>
+            <textarea name="message" placeholder="研究室に関する情報を入力"></textarea>
+            
+          </form>
+
+        </div>
+
+      </div>
+
+      <br>
+      <a class="back-link" href="/Lab">授業一覧に戻る</a>
+
+    </div>
+  </main>
+  <footer>
+    <div class="wrapper">
+      <p>&copy; うらシラバス. All rights reserved</p>
+      <ul class="footer-links">
+        <li><a href="/terms">利用規約</a></li>
+        <li><a href="/privacy">プライバシーポリシー</a></li>
+        <li><a href="https://forms.gle/cudtixSY962CpuPj7">コンタクト</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

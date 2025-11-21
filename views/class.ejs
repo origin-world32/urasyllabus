@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>裏シラバス - 授業情報</title>
+  <link rel='stylesheet' href='/stylesheets/reset.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/class.css' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body data-faculty="<%= faculty || '' %>" data-department="<%= department || '' %>">
+
+  <header id = "header">
+    <div class="wrapper">
+      <a href="/"><h2>うらシラバス</h2></a>
+
+    </div>
+      
+  </header>
+
+  <main>
+    <div class="wrapper">
+
+      <% if (page !== 'index') { %>
+      <nav class="breadcrumb">
+        <a href="/">TOP</a>
+        <% if (page === 'class') { %>
+          &gt; <a href="/class?faculty=<%= faculty %>&department=<%= department %>">授業一覧</a>
+        <% }%>
+      </nav>
+      <% } %>
+
+      <button id="addBtn">+ 新しい授業を追加</button>
+
+      <!-- 非表示の入力フォーム -->
+      <div id="addClassForm" class="form-container hidden">
+        
+        <h3 style="flex-basis: 100%;">授業を追加する</h3>
+        <form id="classForm" style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%;">
+          
+          <div class="form-left">
+            <label>* 学部：</label>
+            <select id="facultySelect"></select>
+
+            <label>* 学科：</label>
+            <select id="departmentSelect"></select>
+
+            <label>* 授業名（講座名）：</label>
+            <input type="text" id="titleInput" required>
+
+            <label>* 担当教員：</label>
+            <input type="text" id="teacherInput" required>
+
+
+            <label>* 出席の有無：</label>
+            <select id="attendance" required>
+              <option value="">未選択</option>
+              <option value="有">有</option>
+              <option value="部分的に有">部分的に有</option>
+              <option value="無">無</option>
+            </select>
+          </div>
+
+          <div class="form-right">
+            <label>* 単位の取りやすさ：</label>
+            <select id="difficultySelect" required>
+              <option value="">未選択</option>
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★☆</option>
+              <option value="3">★★★☆☆</option>
+              <option value="2">★★☆☆☆</option>
+              <option value="1">★☆☆☆☆</option>
+            </select>
+
+            <label>* 満足度：</label>
+            <select id="satisfactionSelect" required>
+              <option value="">未選択</option>
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★☆</option>
+              <option value="3">★★★☆☆</option>
+              <option value="2">★★☆☆☆</option>
+              <option value="1">★☆☆☆☆</option>
+            </select>
+
+            <label>授業概要：</label>
+            <textarea id="descriptionInput" rows="6"></textarea>
+          </div>
+
+          <div class="btn-area">
+            <button type="submit">投稿</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="facultyLabel"><!--スマホの時のみ学部欄が非表示のためこれを表示-->
+        <%= faculty ? faculty : "全学部" %>
+      </div>
+    
+      <table id="classTable">
+        <thead>
+          <tr>
+            <th class="faculty">学部</th>
+            <th>学科</th>
+            <th>授業名 ↓ <span>クリックで詳細ページ</span></th>
+            <th>担当教員</th>
+            <th>単位の取りやすさ</th>
+          </tr>
+        </thead>
+        <tbody id="classTableBody">
+
+          <% function stars(num) { 
+              return '★★★★★☆☆☆☆☆'.slice(5 - num, 10 - num); 
+          } %>
+
+
+          <% if (results.length > 0) { %>
+            <% results.forEach(item => { %>
+              <tr>
+                <td class="faculty"><%= item.faculty %></td>
+                <td class="department"><%= item.department %></td>
+                <td class="title"><a href="/classdetail/<%= item.id %>"><%= item.title %></a></td>
+                <td class="teacher"><%= item.teacher %></td>
+                <td class="difficulty"><%= stars(Math.round(item.avgDifficulty)) %> : <%= item.avgDifficulty.toFixed(1) %> / 5</td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+
+      <% if (results.length === 0) { %>
+        <p class="no-results">該当する授業は見つかりませんでした。</p>
+      <% } %>
+
+      <a href="/" class="back-link">検索画面に戻る</a>
+
+    </div>
+    
+  </main>
+  <footer>
+    <div class="wrapper">
+      <p>&copy; うらシラバス. All rights reserved</p>
+      <ul class="footer-links">
+        <li><a href="/terms">利用規約</a></li>
+        <li><a href="/privacy">プライバシーポリシー</a></li>
+        <li><a href="https://forms.gle/cudtixSY962CpuPj7">コンタクト</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/javascripts/class.js"></script>
+</body>
+
+
+
+</html>

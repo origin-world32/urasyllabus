@@ -1,0 +1,285 @@
+
+.main-title{
+    margin: 20px 0;
+
+
+}
+
+/* 初期は非表示 */
+#facultyLabel {
+  display: none;
+  margin-top: 5px;
+  font-size: 16px;
+  border-bottom: 1px solid gray;
+}
+
+
+/* class一覧用テーブル */
+#classTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f8f8f8; /* 優しい灰色系 */
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 12px; /* 小さめにして情報を詰める */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin: 5px 0;
+}
+
+#classTable th,
+#classTable td {
+  padding: 6px 8px; /* ちょっと詰める */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+#classTable th {
+  background: #999; /* topの灰色系に合わせる */
+  color: #fff;
+  font-weight: 500;
+}
+#classTable th span{
+  color: #fff38c;
+}
+
+#classTable tr:hover {
+  background: #e6f0ff; /* 優しいホバー */
+}
+
+#classTable td.title a {
+  color: #182fff;
+  text-decoration: none;
+}
+
+#classTable td.title a:hover {
+  text-decoration: underline;
+}
+
+.no-results {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: #444;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+/*---------td---------*/
+.faculty{
+  width: 11%;
+}
+.department{
+  width: 16%;
+}
+.title{
+  width: 10%;
+}
+.teacher{
+  width: 8%;
+}
+
+.difficulty{
+  width: 11%;
+}
+.satisfaction{
+  width: 11%;
+}
+
+.no-results {
+  text-align: center;
+  color: #666;
+  margin-top: 40px;
+  font-size: 1.2em;
+}
+
+.back-link {
+  display: block;
+  width: fit-content;
+  margin: 20px auto;
+  padding: 8px 16px;
+  text-decoration: none;
+  background: #007acc;
+  color: white;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.back-link:hover {
+  background: #00508a;
+}
+
+
+/*ーーーーーーーーー追加項目の部分ーーーーーーーーーー*/
+#addBtn{
+  margin-top: 10px;
+}
+
+.form-container {
+  margin: 15px auto;
+  padding: 8px 15px;  /* 少し狭く */
+  background: #ddd;
+  border-radius: 8px;
+  width:70%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;  /* 左右の列間も小さく */
+  box-sizing: border-box;
+  position: relative;
+  font-size: 12px; /* フォントを小さめに */
+}
+
+/* 左右列 */
+.form-left,
+.form-right {
+  flex: 1;
+  min-width: 250px; /* 少し小さく */
+}
+
+/* ラベル */
+.form-container label {
+  display: block;
+  margin-top: 6px; /* 上下の余白を小さく */
+  font-size: 12px;
+}
+
+/* input, select */
+.form-container input,
+.form-container select {
+  width: 100%;
+  height: 24px; /* 高さを小さく */
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* textarea */
+.form-right textarea {
+  width: 100%;
+  height: 80px; /* 小さめに */
+  padding: 4px 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+/* ボタン */
+.btn-area button {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.hidden {
+
+  display: none;
+}
+
+
+
+/*ーーーーーーーーーレスポンシブデザインーーーーーーーー*/
+@media (max-width: 431px) {
+  main{
+    margin-top: 60px;
+  }
+
+  #addBtn{
+    font-size: 12px;
+  }
+
+  /* フォーム全体のサイズを小さく統一 */
+  .form-container {
+    width: 100%;
+    margin: 15px 0;
+    font-size: 12px;      /* 基本文字サイズ */
+    gap: 0;          /* flex アイテム間の隙間をゼロに */
+    flex-direction: column; /* 縦並びに統一したい場合 */
+  }
+  
+  /* ラベル */
+  .form-container label {
+    font-size: 11px;      /* ラベルだけ小さく */
+    margin-top: 3px;
+    line-height: 1.2;
+    display: block;
+  }
+
+  /* input, select */
+  .form-container input,
+  .form-container select {
+    width: 100%;
+    height: 20px;         /* 高さを小さく */
+    font-size: 13px;
+    padding: 1px;
+  }
+
+  /* textarea */
+  .form-container textarea {
+    width: 100%;
+    height: 60px;         /* 高さを少し小さく */
+    padding: 2px 4px;
+    font-size: 10px;
+    resize: none;
+  }
+
+  /* ボタン */
+  .form-container button {
+    padding: 3px 8px;     /* ボタン内の余白を小さく */
+    font-size: 10px;      /* ボタン文字サイズも小さく */
+    border-radius: 4px;
+  }
+
+  .form-left,
+  .form-right {
+    flex: 1 1 100%; /* 幅100%にして縦並びで揃える */
+    min-width: 0;   /* 縮小可能に */
+  }
+
+  .form-container .btn-area button {
+    top: 10px;
+    right: 14px;
+  }
+ 
+
+  #facultyLabel {
+    display: block;
+
+  }
+
+  #classTable{
+    font-size: 10px;
+  }
+  #classLabTable th,
+  #classTable td {
+    padding: 4px 6px;
+  }
+
+  /* テーブルヘッダーの学部 */
+  #classTable th.faculty {
+    display: none;
+  }
+
+  /* テーブルボディの学部列 */
+  #classTable td.faculty {
+    display: none;
+  }
+  #classTable th span{
+    display: none;
+  }
+ 
+  .department{
+    width: 18%;
+  }
+
+
+ 
+}

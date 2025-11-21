@@ -1,0 +1,43 @@
+
+main .wrapper {
+  width: 50%;
+
+  margin: 100px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+main h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+main p, main li {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+ul {
+  padding-left: 20px;
+  list-style: disc; /* ◉・を表示 */
+  padding-left: 20px; /* インデントをつける */
+}
+
+@media (max-width: 431px) {
+  main .wrapper{
+    width: 92%;
+    margin: 30px auto;
+    
+
+  }
+  main .wrapper p,
+  main .wrapper li {
+    padding-bottom: 5px;
+    font-size: 12px;
+  }
+  header{
+    height: 60px;
+  }
+}

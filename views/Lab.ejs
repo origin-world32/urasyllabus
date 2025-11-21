@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>裏シラバス - 授業情報</title>
+  <link rel='stylesheet' href='/stylesheets/reset.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/Lab.css' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+</head>
+
+<body data-faculty="<%= faculty || '' %>" data-department="<%= department || '' %>">
+
+  <header id = "header">
+    <div class="wrapper">
+      <a href="/"><h2>うらシラバス</h2></a>
+
+    </div>
+      
+  </header>
+
+  <main>
+    <div class="wrapper">
+      <nav class="breadcrumb">
+        <a href="/">TOP</a>
+        
+        <% if (page === 'Lab') { %>
+          &gt; <a href="/Lab?faculty=<%= faculty %>&department=<%= department %>">研究室一覧</a>
+        <% }%>
+      </nav>
+      <button id="addBtn">+ 新しい研究室を追加</button>
+
+
+      <!-- 非表示の入力フォーム -->
+      <div id="addLabForm" class="form-container hidden">
+        
+        <h3 style="flex-basis: 100%;">研究室を追加する</h3>
+        <form id="LabForm" style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%;">
+          
+          <div class="form-left">
+            <label>* 学部：</label>
+            <select id="facultySelect"></select>
+
+            <label>* 学科：</label>
+            <select id="departmentSelect"></select>
+
+            <label>* 研究室名：</label>
+            <input type="text" id="titleInput" required>
+
+            <label>* 教授名：</label>
+            <input type="text" id="teacherInput" required>
+          </div>
+          <div class="form-right">
+
+            <label>* コアタイム：</label>
+            <select id="coretimeInput" required>
+              <option value="">未選択</option>
+              <option value="週1~">週1 ~</option>
+              <option value="週3~">週3 ~</option>
+              <option value="週5~">週5 ~</option>
+            </select>
+
+            <label>* キーワード：</label>
+            <input type="text" id="keywordInput" required>
+
+            <label>研究室情報：</label>
+            <textarea id="descriptionInput" rows="6"></textarea>
+           
+          </div>
+
+          <div class="btn-area">
+            <button type="submit">投稿</button>
+          </div>
+        </form>
+      </div>
+      <div id="facultyLabel"><!--スマホの時のみ学部欄が非表示のためこれを表示-->
+        <%= faculty ? faculty : "全学部" %>
+      </div>
+      
+
+      <table id="LabTable">
+        <thead>
+          <tr>
+            <th class="faculty">学部</th>
+            <th>学科</th>
+            <th>研究室名 ↓ <span>クリックで詳細ページ</span></th>
+            <th>教授名</th>
+            <th>コアタイム</th>
+            <th>キーワード</th>
+          </tr>
+        </thead>
+        <tbody id="LabTableBody">
+
+          <% if (results.length > 0) { %>
+            <% results.forEach(item => { %>
+              <tr>
+                <td class="faculty"><%= item.faculty %></td>
+                <td class="department"><%= item.department %></td>
+                <td class="title"><a href="/Labdetail/<%= item.id %>"><%= item.title %></a></td>
+                <td class="teacher"><%= item.teacher %></td>
+                <td class="coretime"><%= item.coretime %></td>
+                <td class="keyword"><%= item.keyword %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+
+      <% if (results.length === 0) { %>
+        <p class="no-results">該当する授業は見つかりませんでした。</p>
+      <% } %>
+
+      <a href="/" class="back-link">検索画面に戻る</a>
+
+    </div>
+    
+  </main>
+  <footer>
+    <div class="wrapper">
+      <p>&copy; うらシラバス. All rights reserved</p>
+      <ul class="footer-links">
+        <li><a href="/terms">利用規約</a></li>
+        <li><a href="/privacy">プライバシーポリシー</a></li>
+        <li><a href="https://forms.gle/cudtixSY962CpuPj7">コンタクト</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/javascripts/Lab.js"></script>
+</body>
+
+
+
+</html>

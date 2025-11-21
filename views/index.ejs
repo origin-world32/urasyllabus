@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>うらシラバス</title>
+    <link rel='stylesheet' href='/stylesheets/reset.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/index.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/javascripts/header.js"></script>
+  </head>
+  <body>
+
+
+    <header id = "header">
+        <div class="wrapper">
+            <a href="/"><h2>うらシラバス</h2></a>
+
+
+        </div>
+        
+
+    </header>
+
+
+  <main>
+    <div class="wrapper">
+     
+      <div class="all-section">
+        <section class="form-section">
+          <h2>口コミ募集中</h2>
+          <p class="form-number"> 授業・研究室情報は<span><%= totalReviews %> </span> 件以上集まっています.</p>
+        </section>
+
+       
+        
+        
+        <section class="form-section">
+
+          <h2>授業を検索</h2>
+
+          <form action="/class" method="get" class="search-form">
+            <div class="form-group">
+              <select name="faculty" id="classFaculty">
+                <option value="">学部を選択</option>
+                <% Object.keys(facultyData).forEach(faculty => { %>
+                  <option value="<%= faculty %>"><%= faculty %></option>
+                <% }) %>
+                
+              </select>
+              <select name="department" id="classDepartment">
+                <option value="">学科を選択</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              
+              <select name="difficulty" id="difficulty">
+                <option value="">単位の取りやすさ</option>
+                <option value="5">★★★★★</option>
+                <option value="4">★★★★☆</option>
+                <option value="3">★★★☆☆</option>
+                <option value="2">★★☆☆☆</option>
+                <option value="1">★☆☆☆☆</option>
+              </select>
+
+              <select name="satisfaction" id="satisfaction">
+                <option value="">満足度</option>
+                <option value="5">★★★★★</option>
+                <option value="4">★★★★☆</option>
+                <option value="3">★★★☆☆</option>
+                <option value="2">★★☆☆☆</option>
+                <option value="1">★☆☆☆☆</option>
+              </select>
+
+            </div>
+            <div class="form-group">
+              <input type="text" id="teacher" name="teacher" placeholder="教授名を入力">
+            </div>
+
+          
+            <button type="submit" class="search-button">検索</button>
+          </form>
+        </section>
+
+
+
+
+        <section class="form-section">
+
+          <h2>研究室を検索</h2>
+
+          <form action="/Lab" method="get" class="search-form">
+            <div class="form-group">
+              <select name="faculty" id="labFaculty">
+                <option value="">学部を選択</option>
+                <% Object.keys(facultyData).forEach(faculty => { %>
+                  <option value="<%= faculty %>"><%= faculty %></option>
+                <% }) %>
+                
+              </select>
+              <select name="department" id="labDepartment">
+                <option value="">学科を選択</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+
+              <input type="text" id="teacher" name="teacher" placeholder="教授名を入力">
+              <input type="text" name="keyword" placeholder="キーワードで検索">
+
+            </div>
+
+            <div class="form-group">
+
+              <select name="coretime" id="coretime">
+                <option value="">コアタイム</option>
+                <option value="週1~">週1 ~ </option>
+                <option value="週3~">週3 ~ </option>
+                <option value="週5~">週5 ~ </option>
+              </select>
+
+            </div>
+
+          
+            <button type="submit" class="search-button">検索</button>
+          </form>
+        </section>
+        <section class="text-section">
+          <h2>うらシラバス</h2>
+        
+          <p>大学公式には絶対に載らない、芝浦工業大学の学生の“ほんとの声”を共有するうらシラバス。
+              授業のリアルな評判も、研究室の空気も、このサイトでサクッと確認できる。
+
+              「今日寝坊した…」そんな時も、
+              掲示板でノートや連絡を教えてくれる先輩が見つかるかも。
+
+              みんなでつくる、大学生活の“秘密の履修ガイド”。
+          </p>
+        </section>
+        <section class="delete-section">
+          <a href="https://forms.gle/LqbeYMHDdUgf4vxu7" class="deleteBtn">削除依頼はこちら</a>
+
+         
+
+
+        </section>
+    
+
+      </div>
+
+    </div>
+    
+
+  </main>
+
+
+  <footer>
+    <div class="wrapper">
+      <p>&copy; うらシラバス. All rights reserved</p>
+      <ul class="footer-links">
+        <li><a href="/terms">利用規約</a></li>
+        <li><a href="/privacy">プライバシーポリシー</a></li>
+        <li><a href="https://forms.gle/cudtixSY962CpuPj7">コンタクト</a></li>
+      </ul>
+    </div>
+  </footer>
+
+
+
+
+
+  <script src="/javascripts/index.js"></script>
+</body>
+</html>
