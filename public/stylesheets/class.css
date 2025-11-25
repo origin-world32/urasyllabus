@@ -277,7 +277,17 @@
   }
  
   .department{
-    width: 18%;
+    width: 16%;
+  }
+  .title{
+    width: 10%;
+  }
+  .teacher{
+    width: 10%;
+  }
+
+  .difficulty{
+    width: 10%;
   }
 
 
