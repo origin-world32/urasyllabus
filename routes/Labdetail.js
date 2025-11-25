@@ -3,33 +3,41 @@ module.exports = function(db) {
   const router = express.Router();
 
   // ===== 研究室詳細ページ =====
-  router.get('/:id', (req, res) => {
+  router.get('/:id', async (req, res) => {
     const LabId = Number(req.params.id);
 
-    // 研究室情報取得
-    db.get(`SELECT * FROM Lab WHERE id = ?`, [LabId], (err, LabInfo) => {
-      if (err) return res.status(500).send("DBエラー");
+    try {
+      // 研究室情報取得
+      const labResult = await db.query(
+        `SELECT * FROM Lab WHERE id = $1`,
+        [LabId]
+      );
+
+      const LabInfo = labResult.rows[0];
       if (!LabInfo) return res.status(404).send("研究室が見つかりません");
 
       // 掲示板投稿取得
-      db.all(
-        `SELECT * FROM Lab_post WHERE lab_id = ? ORDER BY created_at DESC`,
-        [LabId],
-        (err, posts) => {
-          if (err) return res.status(500).send("掲示板読み込みエラー");
-
-          res.render('Labdetail', {
-            page: 'Labdetail',
-            LabInfo,
-            posts
-          });
-        }
+      const postResult = await db.query(
+        `SELECT * FROM Lab_post WHERE lab_id = $1 ORDER BY created_at DESC`,
+        [LabId]
       );
-    });
+
+      const posts = postResult.rows;
+
+      res.render('Labdetail', {
+        page: 'Labdetail',
+        LabInfo,
+        posts
+      });
+
+    } catch (err) {
+      console.error("DBエラー:", err);
+      return res.status(500).send("DBエラー");
+    }
   });
 
   // ===== 掲示板投稿 =====
-  router.post('/:id/post', (req, res) => {
+  router.post('/:id/post', async (req, res) => {
     const LabId = Number(req.params.id);
     const { message } = req.body;
 
@@ -37,15 +45,20 @@ module.exports = function(db) {
       return res.redirect(`/Labdetail/${LabId}`);
     }
 
-    db.run(
-      `INSERT INTO Lab_post (lab_id, message, created_at) VALUES (?, ?, datetime('now'))`,
-      [LabId, message],
-      (err) => {
-        if (err) return res.status(500).send("掲示板投稿エラー");
-        res.redirect(`/Labdetail/${LabId}`);
-      }
-    );
+    try {
+      await db.query(
+        `INSERT INTO Lab_post (lab_id, message, created_at)
+         VALUES ($1, $2, NOW())`,
+        [LabId, message]
+      );
+
+      res.redirect(`/Labdetail/${LabId}`);
+
+    } catch (err) {
+      console.error("掲示板投稿エラー:", err);
+      res.status(500).send("掲示板投稿エラー");
+    }
   });
 
   return router;
-}
+};

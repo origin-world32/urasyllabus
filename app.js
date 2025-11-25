@@ -5,106 +5,117 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var fs = require('fs');
 
-//SQLiteの定義
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./database.sqlite', (err) => {
-  if (err) console.error(err);
-  else console.log('Connected to SQLite database.');
+// =======================
+//  PostgreSQL へ変更
+// =======================
+const { Pool } = require("pg");
+require("dotenv").config();
+
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
-// 授業テーブル
-db.run(`
-  CREATE TABLE IF NOT EXISTS classes(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    faculty TEXT,
-    department TEXT,
-    title TEXT,
-    teacher TEXT,
-    attendance TEXT,
-    description TEXT,
-    created_at TEXT
-  )
-`);
-
-// 研究室テーブル
-db.run(`
-  CREATE TABLE IF NOT EXISTS Lab (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    faculty TEXT,
-    department TEXT,
-    title TEXT,
-    teacher TEXT,
-    coretime TEXT,
-    keyword TEXT,
-    description TEXT,
-    created_at TEXT
-  )
-`);
-
-// 授業レビュー
-db.run(`
-  CREATE TABLE IF NOT EXISTS class_reviews (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    class_id INTEGER,
-    difficulty REAL,
-    satisfaction REAL,
-    review_date TEXT,
-    FOREIGN KEY(class_id) REFERENCES classes(id)
-  )
-`);
-
-// 授業掲示板投稿（授業用 or 過去問用を type で区別）
-db.run(`
-  CREATE TABLE IF NOT EXISTS class_post (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    class_id INTEGER,
-    type TEXT,            -- 'class' または 'exam'
-    message TEXT,
-    created_at TEXT,
-    FOREIGN KEY(class_id) REFERENCES classes(id)
-  )
-`);
+db.connect()
+  .then(() => console.log("Connected to PostgreSQL database."))
+  .catch(err => console.error("PostgreSQL connection error:", err));
 
 
+// =======================
+//  テーブル作成
+// =======================
 
-// 研究室掲示板投稿
-db.run(`
-  CREATE TABLE IF NOT EXISTS Lab_post (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    lab_id INTEGER,
-    message TEXT,
-    created_at TEXT,
-    FOREIGN KEY(lab_id) REFERENCES Lab(id)
-  )
-`);
+async function createTables() {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS classes(
+        id SERIAL PRIMARY KEY,
+        faculty TEXT,
+        department TEXT,
+        title TEXT,
+        teacher TEXT,
+        attendance TEXT,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
 
-console.log("SQLite テーブルの作成が完了しました");
-db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
-  if (err) console.error(err);
-  else console.log("テーブル一覧:", rows);
-});
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS Lab (
+        id SERIAL PRIMARY KEY,
+        faculty TEXT,
+        department TEXT,
+        title TEXT,
+        teacher TEXT,
+        coretime TEXT,
+        keyword TEXT,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS class_reviews (
+        id SERIAL PRIMARY KEY,
+        class_id INTEGER REFERENCES classes(id),
+        difficulty REAL,
+        satisfaction REAL,
+        review_date TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS class_post (
+        id SERIAL PRIMARY KEY,
+        class_id INTEGER REFERENCES classes(id),
+        type TEXT,
+        message TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS Lab_post (
+        id SERIAL PRIMARY KEY,
+        lab_id INTEGER REFERENCES Lab(id),
+        message TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    console.log("PostgreSQL テーブル作成完了！");
+  } catch (err) {
+    console.error("テーブル作成エラー:", err);
+  }
+}
+
+createTables();
 
 
-var indexRouter = require('./routes/index')(db); // indexルーティング
-var usersRouter = require('./routes/users'); // userルーティング → いずれログイン機能を作るかもしれないその時用
-var classRouter = require('./routes/class')(db);  // infoルーティング
-var classdetailRouter = require('./routes/classdetail')(db); // classルーティング
-var LabRouter = require('./routes/Lab')(db); //Labルーティング
-var LabdetailRouter = require('./routes/Labdetail')(db); //Labdetailルーティング
+// =======================
+//  ルーティング
+// =======================
+
+var indexRouter = require('./routes/index')(db);
+var usersRouter = require('./routes/users');
+var classRouter = require('./routes/class')(db);
+var classdetailRouter = require('./routes/classdetail')(db);
+var LabRouter = require('./routes/Lab')(db);
+var LabdetailRouter = require('./routes/Labdetail')(db);
+
 
 var app = express();
 
 
-// facultyData.jsonを読み込む
+// facultyData.json を読み込み
 const facultyDataPath = path.join(__dirname, 'data', 'facultyData.json');
 const facultyData = JSON.parse(fs.readFileSync(facultyDataPath, 'utf8'));
 
-// facultyDataを全ルータで使えるように設定
 app.use((req, res, next) => {
   req.facultyData = facultyData;
   next();
 });
-// facultyデータをJSONとして返すルート
+
 app.get('/faculties', (req, res) => {
   res.json(facultyData);
 });
@@ -121,30 +132,23 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
-
-
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/class', classRouter);      
-app.use('/classdetail', classdetailRouter);     
+app.use('/class', classRouter);
+app.use('/classdetail', classdetailRouter);
 app.use('/Lab', LabRouter);
 app.use('/Labdetail', LabdetailRouter);
 
 
-// catch 404 and forward to error handler
+// catch 404
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

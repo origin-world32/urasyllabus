@@ -104,6 +104,9 @@ main .wrapper > * {
   .form-number{
     font-size: 14px;
   }
+  main .wrapper::before {
+    background-image: none;
+  }
   .all-section{
     width: 100%;
     margin: 10px 0;

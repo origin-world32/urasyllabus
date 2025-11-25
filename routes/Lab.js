@@ -3,11 +3,13 @@ module.exports = function(db) {
   const router = express.Router();
 
   // ===== 研究室一覧ページ =====
-  router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
     const { faculty, department, teacher, coretime, keyword } = req.query;
 
-    db.all(`SELECT * FROM Lab`, [], (err, labData) => {
-      if (err) return res.status(500).send("DB読み込みエラー");
+    try {
+      // Lab テーブル全件取得
+      const result = await db.query(`SELECT * FROM Lab`);
+      let labData = result.rows;
 
       let results = labData;
 
@@ -24,30 +26,53 @@ module.exports = function(db) {
         );
       }
 
-      res.render('Lab', { page: 'Lab', results, faculty, department, teacher, keyword, coretime });
-    });
+      res.render('Lab', {
+        page: 'Lab',
+        results,
+        faculty,
+        department,
+        teacher,
+        keyword,
+        coretime
+      });
+
+    } catch (err) {
+      console.error("DB 読み込みエラー:", err);
+      res.status(500).send("DB読み込みエラー");
+    }
   });
 
   // ===== 研究室追加 =====
-  router.post('/add', (req, res) => {
-    const { faculty, department, title, teacher, coretime, keyword, description } = req.body;
+  router.post('/add', async (req, res) => {
+    const {
+      faculty,
+      department,
+      title,
+      teacher,
+      coretime,
+      keyword,
+      description
+    } = req.body;
 
-    const created_at = new Date().toISOString(); // ISO形式で保存
+    const created_at = new Date().toISOString();
 
-    db.run(
-      `INSERT INTO Lab (faculty, department, title, teacher, coretime, keyword, description, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [faculty, department, title, teacher, coretime, keyword, description, created_at],
-      function(err) {
-        if (err) {
-          console.error('追加エラー:', err);
-          return res.status(500).json({ message: '研究室の追加中にエラーが発生しました。' });
-        }
+    try {
+      const result = await db.query(
+        `INSERT INTO Lab (faculty, department, title, teacher, coretime, keyword, description, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING id`,
+        [faculty, department, title, teacher, coretime, keyword, description, created_at]
+      );
 
-        // this.lastID に自動採番された ID が入る
-        res.json({ message: '研究室を追加しました！', id: this.lastID });
-      }
-    );
+      res.json({
+        message: "研究室を追加しました！",
+        id: result.rows[0].id
+      });
+
+    } catch (err) {
+      console.error("追加エラー:", err);
+      res.status(500).json({ message: "研究室の追加中にエラーが発生しました。" });
+    }
   });
 
   return router;

@@ -1,89 +1,95 @@
-module.exports = function(db) {
-  var express = require('express');
-  var router = express.Router();
+module.exports = function (db) {
+  const express = require("express");
+  const router = express.Router();
 
   // ===== 授業詳細ページ =====
-  router.get('/:id', (req, res) => {
+  router.get("/:id", async (req, res) => {
     const classId = Number(req.params.id);
 
-    db.get(`SELECT * FROM classes WHERE id = ?`, [classId], (err, classInfo) => {
-      if (err) return res.status(500).send("DBエラー");
+    try {
+      // 授業情報取得
+      const classRes = await db.query(
+        `SELECT * FROM classes WHERE id = $1`,
+        [classId]
+      );
+
+      const classInfo = classRes.rows[0];
+
       if (!classInfo) return res.status(404).send("授業が見つかりません");
 
       // レビュー取得
-      db.all(`SELECT * FROM class_reviews WHERE class_id = ?`, [classId], (err, reviews) => {
-        if (err) return res.status(500).send("レビュー読み込みエラー");
+      const reviewRes = await db.query(
+        `SELECT * FROM class_reviews WHERE class_id = $1`,
+        [classId]
+      );
 
-        const reviewCount = reviews.length;
-        let avgDifficulty = 0;
-        let avgSatisfaction = 0;
+      const reviews = reviewRes.rows;
 
-        if (reviewCount > 0) {
-          avgDifficulty =
-            reviews.reduce((s, r) => s + r.difficulty, 0) / reviewCount;
-          avgSatisfaction =
-            reviews.reduce((s, r) => s + r.satisfaction, 0) / reviewCount;
-        }
+      const reviewCount = reviews.length;
+      let avgDifficulty = 0;
+      let avgSatisfaction = 0;
 
-        // 掲示板読み込み
-        db.all(
-          `SELECT * FROM class_post WHERE class_id = ? ORDER BY created_at DESC`,
-          [classId],
-          (err, posts) => {
-            if (err) return res.status(500).send("掲示板読み込みエラー");
+      if (reviewCount > 0) {
+        avgDifficulty =
+          reviews.reduce((s, r) => s + Number(r.difficulty), 0) /
+          reviewCount;
 
-            const classPosts = posts
-              .filter(p => p.type === 'class')
-              .map(p => ({
-                ...p,
-                created_at: p.created_at.replace(" ", "T")
-              }));
+        avgSatisfaction =
+          reviews.reduce((s, r) => s + Number(r.satisfaction), 0) /
+          reviewCount;
+      }
 
-            const examPosts = posts
-              .filter(p => p.type === 'exam')
-              .map(p => ({
-                ...p,
-                created_at: p.created_at.replace(" ", "T")
-              }));
+      // 掲示板取得
+      const postRes = await db.query(
+        `SELECT * FROM class_post WHERE class_id = $1 ORDER BY created_at DESC`,
+        [classId]
+      );
 
+      const posts = postRes.rows;
 
-            res.render('classdetail', {
-              page: 'classdetail',
-              classInfo: {
-                ...classInfo,
-                avgDifficulty,
-                avgSatisfaction,
-                reviewCount
-              },
-              posts: {
-                classPosts,
-                examPosts
-              }
-            });
-          }
-        );
+      const classPosts = posts.filter((p) => p.type === "class");
+      const examPosts = posts.filter((p) => p.type === "exam");
+
+      res.render("classdetail", {
+        page: "classdetail",
+        classInfo: {
+          ...classInfo,
+          avgDifficulty,
+          avgSatisfaction,
+          reviewCount,
+        },
+        posts: {
+          classPosts,
+          examPosts,
+        },
       });
-    });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send("DBエラー");
+    }
   });
 
   // ===== レビュー投稿 =====
-  router.post('/:id/review', (req, res) => {
+  router.post("/:id/review", async (req, res) => {
     const classId = Number(req.params.id);
     const { difficulty, satisfaction } = req.body;
 
-    db.run(
-      `INSERT INTO class_reviews (class_id, difficulty, satisfaction, review_date)
-       VALUES (?, ?, ?, datetime('now'))`,
-      [classId, difficulty, satisfaction],
-      (err) => {
-        if (err) return res.status(500).send("レビュー保存エラー");
-        res.redirect(`/classdetail/${classId}`);
-      }
-    );
+    try {
+      await db.query(
+        `INSERT INTO class_reviews (class_id, difficulty, satisfaction, review_date)
+         VALUES ($1, $2, $3, NOW())`,
+        [classId, difficulty, satisfaction]
+      );
+
+      res.redirect(`/classdetail/${classId}`);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("レビュー保存エラー");
+    }
   });
 
   // ===== 掲示板投稿 =====
-  router.post('/:id/post', (req, res) => {
+  router.post("/:id/post", async (req, res) => {
     const classId = Number(req.params.id);
     const { message, type } = req.body;
 
@@ -91,16 +97,18 @@ module.exports = function(db) {
       return res.redirect(`/classdetail/${classId}?tab=${type}`);
     }
 
-    db.run(
-      `INSERT INTO class_post (class_id, type, message, created_at)
-      VALUES (?, ?, ?, datetime('now'))`,
-      [classId, type, message],
-      (err) => {
-        if (err) return res.status(500).send("掲示板投稿エラー");
-        // 投稿後も元のタブを開く
-        res.redirect(`/classdetail/${classId}?tab=${type}`);
-      }
-    );
+    try {
+      await db.query(
+        `INSERT INTO class_post (class_id, type, message, created_at)
+         VALUES ($1, $2, $3, NOW())`,
+        [classId, type, message]
+      );
+
+      res.redirect(`/classdetail/${classId}?tab=${type}`);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send("掲示板投稿エラー");
+    }
   });
 
   return router;

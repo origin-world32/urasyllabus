@@ -267,19 +267,37 @@
   #LabTable td.faculty {
     display: none;
   }
+
+  /* テーブルヘッダーの教授 */
+  #LabTable th.teacher {
+    display: none;
+  }
+
+  /* テーブルボディの教授列 */
+  #LabTable td.teacher {
+    display: none;
+  }
+  #LabTable th span{
+    display: none;
+  }
+
+
   #LabTable th span{
     display: none;
   }
 
   .department{
-    width: 16%;
+    width: 13%;
   }
 
   .teacher{
     width: 11%;
   }
+  .coretime{
+    width: 3%;
+  }
   .keyword{
-    width: 21%;
+    width: 17%;
   }
 
  

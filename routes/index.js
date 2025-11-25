@@ -1,45 +1,52 @@
 var express = require('express');
 
-module.exports = function(db) { // dbを引数で受け取る
+module.exports = function(db) { 
   var router = express.Router();
 
-  router.get('/', function(req, res) {
+  router.get('/', async function(req, res) {
     const facultyData = req.facultyData;
 
-    const counts = {};
+    try {
+      const queries = {
+        classReviews: 'SELECT COUNT(*) AS count FROM class_reviews',
+        classPost: 'SELECT COUNT(*) AS count FROM class_post',
+        lab: 'SELECT COUNT(*) AS count FROM Lab',
+        labPost: 'SELECT COUNT(*) AS count FROM Lab_post'
+      };
 
-    const queries = [
-      { key: 'classReviews', sql: 'SELECT COUNT(*) AS count FROM class_reviews' },
-      { key: 'classPost', sql: 'SELECT COUNT(*) AS count FROM class_post' },
-      { key: 'lab', sql: 'SELECT COUNT(*) AS count FROM Lab' },
-      { key: 'labPost', sql: 'SELECT COUNT(*) AS count FROM Lab_post' }
-    ];
+      const counts = {};
 
-    let done = 0;
+      // Promise でまとめて同時に処理
+      const results = await Promise.all(
+        Object.keys(queries).map(key =>
+          db.query(queries[key]).then(r => ({
+            key,
+            count: Number(r.rows[0].count)
+          }))
+        )
+      );
 
-    queries.forEach(q => {
-      db.get(q.sql, (err, row) => {
-        if (err) console.error(err);
-        counts[q.key] = row.count;
-
-        done++;
-
-        // 全て完了したらレンダーする
-        if (done === queries.length) {
-          const totalReviews =
-            counts.classReviews +
-            counts.classPost +
-            counts.lab +
-            counts.labPost;
-
-          res.render('index', {
-            page: 'index',
-            facultyData,
-            totalReviews
-          });
-        }
+      // 結果を counts に格納
+      results.forEach(r => {
+        counts[r.key] = r.count;
       });
-    });
+
+      const totalReviews =
+        counts.classReviews +
+        counts.classPost +
+        counts.lab +
+        counts.labPost;
+
+      res.render('index', {
+        page: 'index',
+        facultyData,
+        totalReviews
+      });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("DBエラー");
+    }
   });
 
   // 利用規約
@@ -52,5 +59,5 @@ module.exports = function(db) { // dbを引数で受け取る
     res.render('privacy');
   });
 
-  return router; // ここでrouterを返す
+  return router;
 };
