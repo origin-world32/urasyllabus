@@ -121,7 +121,7 @@
                 <td class="department"><%= item.department %></td>
                 <td class="title"><a href="/classdetail/<%= item.id %>"><%= item.title %></a></td>
                 <td class="teacher"><%= item.teacher %></td>
-                <td class="difficulty"><%= stars(Math.round(item.avgDifficulty)) %> : <%= item.avgDifficulty.toFixed(1) %> / 5</td>
+                <td class="difficulty"><%= stars(Math.round(item.avgDifficulty)) %> : <%= item.avgDifficulty.toFixed(1) %></td>
               </tr>
             <% }) %>
           <% } %>
