@@ -1,31 +1,20 @@
-main{ 
 
-  align-items: center;  
-  flex: 1; /* 残りの高さを自動で占有 */
-
-}
 main .wrapper{
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
+  background-image: url(/images/69156.jpg);
+
+  
 }
-
-
-main .wrapper > * {
-  position: relative;
-  z-index: 1;
-}
-
 
 .all-section{
-  margin: 50px auto;
+  padding-top: 343px;
+  margin: 0 auto;
   width: 60%;
-  background-color: rgba(231, 231, 231, 0.3);
-  border: 1px solid grey;
+  
+
 }
 .form-number{
   font-size: 17px;
+  text-align: center;
 }
 .form-number span{
   font-size: 23px;
@@ -35,12 +24,17 @@ main .wrapper > * {
 
 
 .form-section{
-  padding: 30px 0;
+  width: 60%;
+  margin: 15px auto;
+  padding: 12px 0;
   text-align: center;
+  background-color: rgba(231, 231, 231, 0.9);
+  border: 1px solid grey;
+  border-radius: 6px;
 }
 
 .form-group select, input{
-  width: 25%;
+  width: 40%;
   height: 22px;
   margin: 5px 0;
 
@@ -85,20 +79,60 @@ main .wrapper > * {
 
 
 /*ーーーーーーーーーレスポンシブデザインーーーーーーーー*/
+@media (max-width: 1024px) {
+
+  main .wrapper{
+    background-size: contain;  /* 全体表示して見切れ防止 */
+    background-repeat: no-repeat; 
+    background-position: top center; /* 必要なら調整 */
+  }
+
+  .all-section{
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 320px;
+  }
+
+
+  .form-section{
+    width: 100%;
+  }
+  
+}
+
+
+
+
 @media (max-width: 431px) {
+  
+
+
   header .wrapper h2{
     font-size: 18px;
   }
   .form-number{
     font-size: 14px;
   }
-  main .wrapper::before {
-    background-image: none;
+  main {
+    padding: 0;
+    margin-top: 60px;
+
+  }
+  main .wrapper{
+    background-size: contain;  /* 全体表示して見切れ防止 */
+    background-repeat: no-repeat; 
+    background-position: top center; /* 必要なら調整 */
   }
   .all-section{
     width: 100%;
-    margin: 10px 0;
+    padding-top: 140px;
   }
+
+  .form-section{
+    width: 100%;
+  }
+ 
+ 
   .text-section p{
     font-size: 12px;
   }
@@ -107,6 +141,5 @@ main .wrapper > * {
   }
 
 }
-
 
 
