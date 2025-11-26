@@ -1,12 +1,6 @@
 
-main .wrapper{
-  background-image: url(/images/69156.jpg);
-
-  
-}
-
 .all-section{
-  padding-top: 343px;
+  padding-top: 32px;
   margin: 0 auto;
   width: 60%;
   
@@ -81,16 +75,10 @@ main .wrapper{
 /*ーーーーーーーーーレスポンシブデザインーーーーーーーー*/
 @media (max-width: 1024px) {
 
-  main .wrapper{
-    background-size: contain;  /* 全体表示して見切れ防止 */
-    background-repeat: no-repeat; 
-    background-position: top center; /* 必要なら調整 */
-  }
-
   .all-section{
     width: 70%;
     margin: 0 auto;
-    padding-top: 320px;
+    padding-top: 40px;
   }
 
 
@@ -118,14 +106,10 @@ main .wrapper{
     margin-top: 60px;
 
   }
-  main .wrapper{
-    background-size: contain;  /* 全体表示して見切れ防止 */
-    background-repeat: no-repeat; 
-    background-position: top center; /* 必要なら調整 */
-  }
+
   .all-section{
     width: 100%;
-    padding-top: 140px;
+    padding-top: 20px;
   }
 
   .form-section{
