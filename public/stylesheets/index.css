@@ -6,6 +6,9 @@
   
 
 }
+.section-title{
+  text-align: center;
+}
 .form-number{
   font-size: 17px;
   text-align: center;
@@ -81,6 +84,10 @@
     padding-top: 40px;
   }
 
+  .all-section .section-title{
+    font-size: 20px;
+  }
+
 
   .form-section{
     width: 100%;
@@ -110,6 +117,9 @@
   .all-section{
     width: 100%;
     padding-top: 20px;
+  }
+  .all-section .section-title{
+    font-size: 14px;
   }
 
   .form-section{
